@@ -1,7 +1,9 @@
 import { Component } from "react";
 import "./App.css";
 import { FeedbackOptions } from "./FeedbackOptions/FeedbackOptions";
-
+import { Statistics } from "./Statistics/Statistics";
+import { Section } from "./Section/Section";
+import { Notification } from "./Notification/Notification";
 
 class App extends Component {
   state = {
@@ -13,54 +15,58 @@ class App extends Component {
   countTotalFeedback = () => {
     const values = Object.values(this.state);
     const total = values.reduce((sum, current) => {
-      return sum + current
-    }, 0)
+      return sum + current;
+    }, 0);
 
-    return total
-  }
+    return total;
+  };
 
   countPositiveFeedbackPercentage = (total, goodFeedbacks) => {
-  if (total === 0) {
-    return 0;
-  }
+    if (total === 0) {
+      return 0;
+    }
 
-  return Math.round((goodFeedbacks / total) * 100);
-  }
+    return Math.round((goodFeedbacks / total) * 100);
+  };
 
   addFeedback = (option) => {
-    console.log(option);
     this.setState((prevState) => {
-      return({
-        [option] : prevState[option] + 1,
-      }
-      )
-    }
-    )
+      return {
+        [option]: prevState[option] + 1,
+      };
+    });
   };
 
   render() {
     const options = Object.keys(this.state);
-    const totalFeedbacks = this.countTotalFeedback()
-    const positivePercentage = this.countPositiveFeedbackPercentage( totalFeedbacks, this.state.good)
+    const totalFeedbacks = this.countTotalFeedback();
+    const positivePercentage = this.countPositiveFeedbackPercentage(
+      totalFeedbacks,
+      this.state.good,
+    );
 
     return (
       <>
-        <h2>Please leave a feedback</h2>
+        <Section title={"Please leave a feedback"}>
+          <FeedbackOptions
+            options={options}
+            onLeaveFeedback={this.addFeedback}
+          />
+        </Section>
 
-        <FeedbackOptions options={options} onLeaveFeedback={this.addFeedback}/>
-
-        <h2>Statistics</h2>
-        <ul>
-          {options.map((option, index) => {
-            return (
-              <li key={index}>
-                {option} : {this.state[option]}
-              </li>
-            );
-          })}
-        </ul>
-        <p>Total feedbacks : {totalFeedbacks}</p>
-        <p>Positive feedback: {positivePercentage} %</p>
+        <Section title={"Statistics"}>
+          {totalFeedbacks > 0 ? (
+            <Statistics
+              good={this.state.good}
+              neutral={this.state.neutral}
+              bad={this.state.bad}
+              total={totalFeedbacks}
+              percentage={positivePercentage}
+            />
+          ) : (
+            <Notification message={"There is no feedback"}/>
+          )}
+        </Section>
       </>
     );
   }

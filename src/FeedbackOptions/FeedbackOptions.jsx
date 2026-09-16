@@ -1,10 +1,12 @@
+import { Btn } from "./FeedbackOptions.styled";
+
 export const FeedbackOptions = ({ options, onLeaveFeedback }) => {
   return(
     <div>
       {options.map((option, index) => (
-        <button key={index} onClick={() => onLeaveFeedback(option)}>
+        <Btn key={index} onClick={() => onLeaveFeedback(option)}>
           {option}
-        </button>
+        </Btn>
       ))}
     </div>
   );
